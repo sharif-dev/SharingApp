@@ -14,7 +14,7 @@ import android.widget.EditText;
  */
 public class EditContactActivity extends AppCompatActivity {
 
-    private ContactList contact_list = new ContactList();
+    private ContactList contactList = new ContactList();
     private Contact contact;
     private EditText email;
     private EditText username;
@@ -26,12 +26,12 @@ public class EditContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_contact);
 
         context = getApplicationContext();
-        contact_list.loadContacts(context);
+        contactList.loadContacts(context);
 
         Intent intent = getIntent();
         int pos = intent.getIntExtra("position", 0);
 
-        contact = contact_list.getContact(pos);
+        contact = contactList.getContact(pos);
 
         username = (EditText) findViewById(R.id.username);
         email = (EditText) findViewById(R.id.email);
@@ -49,7 +49,7 @@ public class EditContactActivity extends AppCompatActivity {
             return;
         }
 
-        if (!email_str.contains("@")){
+        if (!email_str.contains("@")) {
             email.setError("Must be an email address!");
             return;
         }
@@ -59,16 +59,19 @@ public class EditContactActivity extends AppCompatActivity {
 
         // Check that username is unique AND username is changed (Note: if username was not changed
         // then this should be fine, because it was already unique.)
-        if (!contact_list.isUsernameAvailable(username_str) && !(contact.getUsername().equals(username_str))) {
+        if (!contactList.isUsernameAvailable(username_str) && !(contact.getUsername().equals(username_str))) {
             username.setError("Username already taken!");
             return;
         }
 
         Contact updated_contact = new Contact(username_str, email_str, id);
 
-        contact_list.deleteContact(contact);
-        contact_list.addContact(updated_contact);
-        contact_list.saveContacts(context);
+        EditContactCommand editContactCommand = new EditContactCommand(contactList, contact, updated_contact, context);
+        editContactCommand.execute();
+
+        if (!editContactCommand.isExecuted()) {
+            return;
+        }
 
         // End EditContactActivity
         finish();
@@ -76,8 +79,12 @@ public class EditContactActivity extends AppCompatActivity {
 
     public void deleteContact(View view) {
 
-        contact_list.deleteContact(contact);
-        contact_list.saveContacts(context);
+        DeleteContactCommand deleteContactCommand = new DeleteContactCommand(contactList, contact, context);
+        deleteContactCommand.execute();
+
+        if (!deleteContactCommand.isExecuted()) {
+            return;
+        }
 
         // End EditContactActivity
         finish();

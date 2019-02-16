@@ -11,7 +11,7 @@ import android.widget.EditText;
  */
 public class AddContactActivity extends AppCompatActivity {
 
-    private ContactList contact_list = new ContactList();
+    private ContactList contactList = new ContactList();
     private Context context;
 
     private EditText username;
@@ -26,7 +26,7 @@ public class AddContactActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email);
 
         context = getApplicationContext();
-        contact_list.loadContacts(context);
+        contactList.loadContacts(context);
     }
 
     public void saveContact(View view) {
@@ -44,20 +44,25 @@ public class AddContactActivity extends AppCompatActivity {
             return;
         }
 
-        if (!email_str.contains("@")){
+        if (!email_str.contains("@")) {
             email.setError("Must be an email address!");
             return;
         }
 
-        if (!contact_list.isUsernameAvailable(username_str)){
+        if (!contactList.isUsernameAvailable(username_str)) {
             username.setError("Username already taken!");
             return;
         }
 
         Contact contact = new Contact(username_str, email_str, null);
 
-        contact_list.addContact(contact);
-        contact_list.saveContacts(context);
+        AddContactCommand addContactCommand = new AddContactCommand(this.contactList, contact, context);
+
+        addContactCommand.execute();
+
+        if (!addContactCommand.isExecuted()) {
+            return;
+        }
 
         // End AddContactActivity
         finish();

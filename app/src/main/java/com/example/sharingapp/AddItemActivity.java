@@ -48,7 +48,7 @@ public class AddItemActivity extends AppCompatActivity {
         item_list.loadItems(context);
     }
 
-    public void saveItem (View view) {
+    public void saveItem(View view) {
 
         String title_str = title.getText().toString();
         String maker_str = maker.getText().toString();
@@ -95,7 +95,7 @@ public class AddItemActivity extends AppCompatActivity {
         add_item_command.execute();
 
         boolean success = add_item_command.isExecuted();
-        if (!success){
+        if (!success) {
             return;
         }
 
@@ -117,8 +117,8 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int request_code, int result_code, Intent intent){
-        if (request_code == REQUEST_CODE && result_code == RESULT_OK){
+    protected void onActivityResult(int request_code, int result_code, Intent intent) {
+        if (request_code == REQUEST_CODE && result_code == RESULT_OK) {
             Bundle extras = intent.getExtras();
             image = (Bitmap) extras.get("data");
             photo.setImageBitmap(image);
